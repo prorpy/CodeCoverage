@@ -37,9 +37,9 @@ CLASS CodeCoverage:
 
     DEFINE TEMP-TABLE ttCodeLine
         FIELD iProgramId   AS INTEGER   SERIALIZE-HIDDEN 
-        FIELD cProgramName AS CHARACTER SERIALIZE-NAME "Program"
-        FIELD cUnitName    AS CHARACTER SERIALIZE-NAME "Unit"
-        FIELD iSourceLine  AS INTEGER   SERIALIZE-NAME "Line" 
+        FIELD cProgramName AS CHARACTER SERIALIZE-NAME "Program":U
+        FIELD cUnitName    AS CHARACTER SERIALIZE-NAME "Unit":U
+        FIELD iSourceLine  AS INTEGER   SERIALIZE-NAME "Line":U 
         FIELD lExecuted    AS LOGICAL   SERIALIZE-HIDDEN  
         INDEX ttCodeLine-prim IS UNIQUE PRIMARY iProgramId cProgramName iSourceLine.
 
@@ -51,7 +51,7 @@ CLASS CodeCoverage:
 
     METHOD PUBLIC VOID ReportCodeCoverageAndNotExecutedLines(INPUT pcFileName AS CHARACTER, OUTPUT pdCodeCoverage AS DECIMAL, OUTPUT lcNotExecutedLines AS LONGCHAR):
         pdCodeCoverage = ReportCodeCoverage(pcFileName).
-        TEMP-TABLE ttCodeLine:WRITE-JSON('longchar', lcNotExecutedLines, TRUE).
+        TEMP-TABLE ttCodeLine:WRITE-JSON('longchar':U, lcNotExecutedLines, TRUE).
     END METHOD. 
     
     METHOD PUBLIC DECIMAL ReportCodeCoverage(INPUT pcFileName AS CHARACTER):
@@ -107,7 +107,7 @@ CLASS CodeCoverage:
         END.
         ASSIGN
             ttSource.iProgramId   = 0
-            ttSource.cProgramName = "Session".
+            ttSource.cProgramName = "Session":U.
     END METHOD.
     
     METHOD PRIVATE VOID ReadTree(  ):
@@ -158,7 +158,7 @@ CLASS CodeCoverage:
         VAR INTEGER iLinesNotCovered.
 
         FOR EACH ttCodeLine:
-            IF ttCodeLine.iSourceLine = 0 OR ttCodeLine.cProgramName = "session" THEN 
+            IF ttCodeLine.iSourceLine = 0 OR ttCodeLine.cProgramName = "session":U THEN 
                 DELETE ttCodeLine. 
             ELSE 
             DO:  
